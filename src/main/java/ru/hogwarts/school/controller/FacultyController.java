@@ -3,7 +3,9 @@ package ru.hogwarts.school.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
+import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 
@@ -11,11 +13,12 @@ import java.util.Collection;
 @RequestMapping("faculty")
 public class FacultyController {
     private final FacultyService facultyService;
+    private final StudentService studentService;
 
-    public FacultyController(FacultyService facultyService) {
+    public FacultyController(FacultyService facultyService, StudentService studentService) {
         this.facultyService = facultyService;
+        this.studentService = studentService;
     }
-
 
     @PostMapping
     /** Create http://localhost:8080/faculty **/
@@ -56,9 +59,21 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 
-    @GetMapping("/filter/{color}")
-    /** Read(filter by color) http://localhost:8080/faculty/filter/{color} **/
-    public ResponseEntity<Collection<Faculty>> colorFacultiesFilter(@PathVariable String color) {
-        return ResponseEntity.ok(facultyService.colorFacultiesFilter(color));
+    @GetMapping("/find/{name_or_color}")
+    /** Read(find by name or color) http://localhost:8080/faculty/find/{name or color} **/
+    public ResponseEntity<Collection<Faculty>> findByNameOrColor(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
+        if (name != null && !name.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByNameIgnoreCase(name));
+        }
+        if (color != null && !color.isBlank()) {
+            return ResponseEntity.ok(facultyService.findByColorIgnoreCase(color));
+        }
+        return ResponseEntity.ok(facultyService.getAllFaculties());
+    }
+
+    @GetMapping("/get/{id}")
+    /** Read(get all students from faculties ID) http://localhost:8080/faculty/get/{id} **/
+    public ResponseEntity<Collection<Student>> getStudentsByFacultyId(@PathVariable Long id) {
+        return ResponseEntity.ok(facultyService.getStudentsByFacultyId(id));
     }
 }
