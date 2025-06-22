@@ -59,19 +59,13 @@ public class FacultyController {
         return ResponseEntity.ok(facultyService.getAllFaculties());
     }
 
-    @GetMapping("/find/{name_or_color}")
+    @GetMapping("/find")
     /** Read(find by name or color) http://localhost:8080/faculty/find/{name or color} **/
-    public ResponseEntity<Collection<Faculty>> findByNameOrColor(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
-        if (name != null && !name.isBlank()) {
-            return ResponseEntity.ok(facultyService.findByNameIgnoreCase(name));
-        }
-        if (color != null && !color.isBlank()) {
-            return ResponseEntity.ok(facultyService.findByColorIgnoreCase(color));
-        }
-        return ResponseEntity.ok(facultyService.getAllFaculties());
+    public ResponseEntity<Collection<Faculty>> findByNameOrColor(@RequestParam String request) {
+        return ResponseEntity.ok(facultyService.findByNameOrColor(request));
     }
 
-    @GetMapping("/get/{id}")
+    @GetMapping("/get_student/{id}")
     /** Read(get all students from faculties ID) http://localhost:8080/faculty/get/{id} **/
     public ResponseEntity<Collection<Student>> getStudentsByFacultyId(@PathVariable Long id) {
         return ResponseEntity.ok(facultyService.getStudentsByFacultyId(id));

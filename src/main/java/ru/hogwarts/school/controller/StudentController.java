@@ -58,16 +58,23 @@ public class StudentController {
 
     @GetMapping("/find/{age}")
     /** Read(find by age) http://localhost:8080/student/find/{age} **/
-    public ResponseEntity<Collection<Student>> findByAge(@RequestParam int ageMin, @RequestParam(required = false) Integer ageMax) {
-        if (ageMax != null && ageMax != 0 && ageMin != 0) {
-            return ResponseEntity.ok(studentService.findByAgeBetween(ageMin, ageMax));
-        }
-        return ResponseEntity.ok(studentService.ageStudentsFilter(ageMin));
+    public ResponseEntity<Collection<Student>> findByAge(@PathVariable int age) {
+        return ResponseEntity.ok(studentService.findByAge(age));
     }
 
-    @GetMapping("/get/{id}")
-    /** Read(get faculty by student ID) http://localhost:8080/student/get/{id} **/
+    @GetMapping("/find/age_between")
+    /** Read(find by age between range) http://localhost:8080/student/find/age_between?ageMin=12&ageMax=15 **/
+    public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam int ageMin, @RequestParam int ageMax) {
+        return ResponseEntity.ok(studentService.findByAgeBetween(ageMin, ageMax));
+    }
+
+    @GetMapping("/get_faculty/{id}")
+    /** Read(get faculty by student ID) http://localhost:8080/student/get_faculty/{id} **/
     public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable Long id) {
-        return ResponseEntity.ok(studentService.getFacultyByStudentId(id));
+        Faculty faculty = studentService.getFacultyByStudentId(id);
+        if (faculty == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(faculty);
     }
 }

@@ -45,16 +45,19 @@ public class FacultyService {
                 .collect(Collectors.toList());
     }
 
-    public Collection<Faculty> findByNameIgnoreCase(String name) {
-        return facultyRepository.findByNameIgnoreCase(name);
-    }
-
-    public Collection<Faculty> findByColorIgnoreCase(String color) {
-        return facultyRepository.findByColorIgnoreCase(color);
+    public Collection<Faculty> findByNameOrColor(String request) {
+        Collection<Faculty> byName = facultyRepository.findByNameIgnoreCase(request);
+        if (byName != null && !byName.isEmpty()) {
+            return byName;
+        }
+        Collection<Faculty> byColor = facultyRepository.findByColorIgnoreCase(request);
+        if (byColor != null && !byColor.isEmpty()) {
+            return byColor;
+        }
+        return null;
     }
 
     public Collection<Student> getStudentsByFacultyId(Long facultyId) {
         return studentRepository.findByFacultyId(facultyId);
     }
-
 }
