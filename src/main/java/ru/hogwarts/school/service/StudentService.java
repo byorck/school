@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
@@ -49,7 +51,7 @@ public class StudentService {
     public Faculty getFacultyByStudentId(Long studentId) {
         return studentRepository.findById(studentId)
                 .map(Student::getFaculty)
-                .orElse(null);
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
     }
 }
 

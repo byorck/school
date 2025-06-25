@@ -3,7 +3,7 @@ select * from student;
 select * from student where age > 10 and age < 20;
 -- Получить всех студентов, возраст которых находится между 10 и 20 (можно подставить любые числа, главное, чтобы нижняя граница была меньше верхней).
 
-select student.name from student;
+select name from student;
 -- Получить всех студентов, но отобразить только список их имен.
 
 select * from student where name ILIKE '%О%';
