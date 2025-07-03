@@ -14,7 +14,7 @@ import java.util.Collection;
 public class FacultyController {
     private final FacultyService facultyService;
 
-    public FacultyController(FacultyService facultyService, StudentService studentService) {
+    public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
     }
 
