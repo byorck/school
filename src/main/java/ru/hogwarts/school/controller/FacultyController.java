@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
-import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
 
@@ -13,11 +12,9 @@ import java.util.Collection;
 @RequestMapping("faculty")
 public class FacultyController {
     private final FacultyService facultyService;
-    private final StudentService studentService;
 
-    public FacultyController(FacultyService facultyService, StudentService studentService) {
+    public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
-        this.studentService = studentService;
     }
 
     @PostMapping
@@ -36,9 +33,10 @@ public class FacultyController {
         return ResponseEntity.ok(faculty);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     /** Update http://localhost:8080/faculty **/
-    public ResponseEntity<Faculty> editFacultyInfo(@RequestBody Faculty faculty) {
+    public ResponseEntity<Faculty> editFacultyInfo(@PathVariable Long id, @RequestBody Faculty faculty) {
+        faculty.setId(id);
         Faculty foundFaculty = facultyService.editFaculty(faculty);
         if (foundFaculty == null) {
             return ResponseEntity.notFound().build();

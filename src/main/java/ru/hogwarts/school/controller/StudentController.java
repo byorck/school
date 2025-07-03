@@ -33,9 +33,10 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     /** Update http://localhost:8080/student **/
-    public ResponseEntity<Student> editStudentInfo(@RequestBody Student student) {
+    public ResponseEntity<Student> editStudentInfo(@PathVariable Long id, @RequestBody Student student) {
+        student.setId(id);
         Student foundStudent = studentService.editStudent(student);
         if (foundStudent == null) {
             return ResponseEntity.notFound().build();
