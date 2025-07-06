@@ -1,5 +1,8 @@
 package ru.hogwarts.school.controller;
 
+import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -7,6 +10,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +31,28 @@ class FacultyControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private FacultyRepository facultyRepository;
+
+    private Faculty testFaculty;
+
+    @BeforeEach
+    void setUp() {
+        testFaculty = new Faculty();
+        testFaculty.setName("FacultyTest");
+        testFaculty.setColor("ColorTest");
+        testFaculty = facultyRepository.save(testFaculty);
+    }
+
+    @AfterEach
+    void tearDown() {
+        studentRepository.deleteAll();
+        facultyRepository.deleteAll();
+    }
+
     @Test
     public void contextLoads() throws Exception {
         assertThat(facultyController).isNotNull();
@@ -40,160 +67,104 @@ class FacultyControllerTest {
                 "http://localhost:" + port + "/faculty", faculty, Faculty.class);
 
         assertThat(createdFaculty).isNotNull();
-
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + createdFaculty.getId());
     }
 
 
     @Test
     void getFacultyInfo() throws Exception {
-        Faculty faculty = new Faculty();
-        faculty.setName("FacultyTest");
-        faculty.setColor("ColorTest");
-        Faculty createdFaculty = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty, Faculty.class);
         Faculty foundFaculty = restTemplate.getForObject(
-                "http://localhost:" + port + "/faculty/" + createdFaculty.getId(), Faculty.class);
+                "http://localhost:" + port + "/faculty/" + testFaculty.getId(), Faculty.class);
 
         assertThat(foundFaculty).isNotNull();
-        assertThat(foundFaculty.getName()).isEqualTo(createdFaculty.getName());
-        assertThat(foundFaculty.getColor()).isEqualTo(createdFaculty.getColor());
-
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + createdFaculty.getId());
+        assertThat(foundFaculty.getName()).isEqualTo(testFaculty.getName());
+        assertThat(foundFaculty.getColor()).isEqualTo(testFaculty.getColor());
     }
 
     @Test
     void deleteFaculty() throws Exception {
-        Faculty faculty = new Faculty();
-        faculty.setName("FacultyTest");
-        faculty.setColor("ColorTest");
-        Faculty createdFaculty = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty, Faculty.class);
+        AssertionsForClassTypes.assertThat(testFaculty).isNotNull();
 
-        assertThat(createdFaculty).isNotNull();
-
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + createdFaculty.getId());
+        restTemplate.delete("http://localhost:" + port + "/faculty/" + testFaculty.getId());
         Faculty deletedFaculty = restTemplate.getForObject(
-                "http://localhost:" + port + "/faculty/" + createdFaculty.getId(), Faculty.class);
+                "http://localhost:" + port + "/faculty/" + testFaculty.getId(), Faculty.class);
 
         assertThat(deletedFaculty).isNull();
     }
 
     @Test
     void editFacultyInfo() throws Exception {
-        Faculty faculty = new Faculty();
-        faculty.setName("FacultyTest");
-        faculty.setColor("ColorTest");
-        Faculty createdFaculty = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty, Faculty.class);
-
-        assertThat(createdFaculty).isNotNull();
-
         String updatedName = "UpdatedName";
         String updatedColor = "UpdatedColor";
-        createdFaculty.setName(updatedName);
-        createdFaculty.setColor(updatedColor);
+        testFaculty.setName(updatedName);
+        testFaculty.setColor(updatedColor);
 
-        restTemplate.put("http://localhost:" + port + "/faculty/" + createdFaculty.getId(), createdFaculty);
+        restTemplate.put("http://localhost:" + port + "/faculty/" + testFaculty.getId(), testFaculty);
 
-        Faculty foundFaculty = restTemplate.getForObject(
-                "http://localhost:" + port + "/faculty/" + createdFaculty.getId(), Faculty.class);
-        assertThat(foundFaculty.getName()).isEqualTo(updatedName);
-        assertThat(foundFaculty.getColor()).isEqualTo(updatedColor);
+        Faculty updatedFaculty = restTemplate.getForObject(
+                "http://localhost:" + port + "/faculty/" + testFaculty.getId(), Faculty.class);
 
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + createdFaculty.getId());
+        assertThat(updatedFaculty.getName()).isEqualTo(updatedName);
+        assertThat(updatedFaculty.getColor()).isEqualTo(updatedColor);
     }
 
 
     @Test
     void getAllFaculties() throws Exception {
-        Faculty faculty1 = new Faculty();
-        faculty1.setName("FacultyTest1");
-        faculty1.setColor("ColorTest1");
-        Faculty created1 = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty1, Faculty.class);
-
-        Faculty faculty2 = new Faculty();
-        faculty2.setName("FacultyTest2");
-        faculty2.setColor("ColorTest2");
-        Faculty created2 = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty2, Faculty.class);
+        Faculty testFaculty2 = new Faculty();
+        testFaculty2.setName("FacultyTest2");
+        testFaculty2.setColor("ColorTest2");
+        testFaculty2 = facultyRepository.save(testFaculty2);
 
         Faculty[] faculties = restTemplate.getForObject(
                 "http://localhost:" + port + "/faculty", Faculty[].class);
 
         assertThat(faculties).isNotNull();
         assertThat(faculties.length).isGreaterThanOrEqualTo(2);
-
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + created1.getId());
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + created2.getId());
     }
 
 
     @Test
     void findByNameOrColor() throws Exception {
-        Faculty faculty1 = new Faculty();
-        String testName1 = "FacultyTest1";
-        String testColor1 = "ColorTest1";
-        faculty1.setName(testName1);
-        faculty1.setColor(testColor1);
-        Faculty created1 = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty1, Faculty.class);
-        Faculty faculty2 = new Faculty();
-        String testName2 = "FacultyTest2";
-        String testColor2 = "ColorTest2";
-        faculty2.setName(testName2);
-        faculty2.setColor(testColor2);
-        Faculty created2 = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty2, Faculty.class);
+        Faculty testFaculty2 = new Faculty();
+        testFaculty2.setName("FacultyTest2");
+        testFaculty2.setColor("ColorTest2");
+        testFaculty2 = facultyRepository.save(testFaculty2);
 
         Faculty[] responseByName = restTemplate.getForObject(
-                "http://localhost:" + port + "/faculty/find?request=" + testName1, Faculty[].class);
+                "http://localhost:" + port + "/faculty/find?request=" + testFaculty.getName(), Faculty[].class);
         assertThat(responseByName).isNotEmpty();
         for (Faculty f : responseByName) {
-            assertThat(f.getName()).contains(testName1);
+            assertThat(f.getName()).contains(testFaculty.getName());
         }
 
         Faculty[] responseByColor = restTemplate.getForObject(
-                "http://localhost:" + port + "/faculty/find?request=" + testColor2, Faculty[].class);
+                "http://localhost:" + port + "/faculty/find?request=" + testFaculty2.getColor(), Faculty[].class);
         assertThat(responseByColor).isNotEmpty();
         for (Faculty f : responseByColor) {
-            assertThat(f.getColor()).contains(testColor2);
+            assertThat(f.getColor()).contains(testFaculty2.getColor());
         }
-
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + created1.getId());
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + created2.getId());
     }
 
     @Test
     void getStudentsByFacultyId() throws Exception {
-        Faculty faculty = new Faculty();
-        faculty.setName("FacultyTest");
-        faculty.setColor("ColorTest");
-
-        Faculty createdFaculty = restTemplate.postForObject(
-                "http://localhost:" + port + "/faculty", faculty, Faculty.class);
-        assertThat(createdFaculty).isNotNull();
-
         Map<String, Object> facultyMap = new HashMap<>();
-        facultyMap.put("id", createdFaculty.getId());
+        facultyMap.put("id", testFaculty.getId());
         Map<String, Object> studentMap = new HashMap<>();
         studentMap.put("name", "StudentTest");
         studentMap.put("age", 21);
         studentMap.put("faculty", facultyMap);
 
-        Student createdStudent = restTemplate.postForObject(
-                "http://localhost:" + port + "/student", studentMap, Student.class);
-        assertThat(createdStudent).isNotNull();
+        Student createdStudent = new Student();
+        createdStudent.setName("StudentTest");
+        createdStudent.setAge(21);
+        createdStudent.setFaculty(testFaculty);
+        createdStudent = studentRepository.save(createdStudent);
 
         Student[] studentsArray = restTemplate.getForObject(
-                "http://localhost:" + port + "/faculty/get_student/" + createdFaculty.getId(), Student[].class);
+                "http://localhost:" + port + "/faculty/get_student/" + testFaculty.getId(), Student[].class);
 
         assertThat(studentsArray).isNotNull();
         assertThat(studentsArray).extracting(Student::getId).contains(createdStudent.getId());
-
-        restTemplate.delete("http://localhost:" + port + "/student/" + createdStudent.getId());
-        restTemplate.delete("http://localhost:" + port + "/faculty/" + createdFaculty.getId());
     }
 }
     
