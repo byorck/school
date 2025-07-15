@@ -78,4 +78,22 @@ public class StudentController {
         }
         return ResponseEntity.ok(faculty);
     }
+
+    @GetMapping("/count_of_all_students")
+    /** Read(get all) http://localhost:8080/student/count_of_all_students **/
+    public Integer countOfAllStudent() {
+        return studentService.countOfAllStudents();
+    }
+
+    @GetMapping("/average_age_of_all_students")
+    /** Read(get all) http://localhost:8080/student/average_age_of_all_students **/
+    public Double averageAgeOfAllStudents() {
+        return studentService.averageAgeOfAllStudents();
+    }
+
+    @GetMapping("/get_last_five_students")
+    /** Read(get all) http://localhost:8080/student/get_last_five_students **/
+    public Collection<Student> getLastFiveStudents() {
+        return studentService.getLastFiveStudents();
+    }
 }

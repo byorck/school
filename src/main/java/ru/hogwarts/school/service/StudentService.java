@@ -63,5 +63,17 @@ public class StudentService {
                 .map(Student::getFaculty)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
     }
+
+    public Integer countOfAllStudents() {
+        return studentRepository.countOfAllStudents();
+    }
+
+    public Double averageAgeOfAllStudents() {
+        return studentRepository.averageAgeOfAllStudents();
+    }
+
+    public Collection<Student> getLastFiveStudents() {
+        return studentRepository.getLastFiveStudents();
+    }
 }
 
