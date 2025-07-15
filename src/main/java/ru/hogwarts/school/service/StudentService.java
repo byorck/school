@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
@@ -13,12 +14,21 @@ import java.util.stream.Collectors;
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final FacultyRepository facultyRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
+        this.facultyRepository = facultyRepository;
     }
 
     public Student createStudent(Student student) {
+        if (student.getFaculty() != null && student.getFaculty().getId() != null) {
+            Faculty faculty = facultyRepository.findById(student.getFaculty().getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found with id " + student.getFaculty().getId()));
+            student.setFaculty(faculty);
+        } else {
+            student.setFaculty(null);
+        }
         return studentRepository.save(student);
     }
 
@@ -27,7 +37,7 @@ public class StudentService {
     }
 
     public Student editStudent(Student student) {
-        return studentRepository.save(student);
+        return createStudent(student);
     }
 
     public void deleteStudent(long id) {
