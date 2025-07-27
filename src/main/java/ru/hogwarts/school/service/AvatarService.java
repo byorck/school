@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -34,10 +36,16 @@ public class AvatarService {
         this.avatarRepository = avatarRepository;
     }
 
+    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+
     public void uploadAvatar(long studentId, MultipartFile file) throws IOException { //сохранение файла
+        logger.info("Was invoked method for upload student avatar");
+        logger.debug("Uploading avatar for studentId = {}, filename = {}", studentId, file.getOriginalFilename());
+
         Student student = studentService.findStudent(studentId);
 
         Path filePath = Path.of(avatarsDir, studentId + "." + getExtension(file.getOriginalFilename()));
+        logger.debug("Avatar file path: {}", filePath);
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
 
@@ -60,9 +68,11 @@ public class AvatarService {
         avatar.setData(generateAvatarPreview(filePath));
 
         avatarRepository.save(avatar);
+
     }
 
     private byte[] generateAvatarPreview(Path filePath) throws IOException { // создание маленькой обложки
+        logger.info("Was invoked method for generate student avatar preview");
         try (InputStream inputStream = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(inputStream, 1024);
              ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -79,15 +89,19 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(long studentId) {
+        logger.info("Was invoked method for find avatar by student id");
         return avatarRepository.findByStudent_Id(studentId).orElse(null);
     }
 
     private String getExtension(String fileName) {
+        logger.info("Was invoked method for get extension");
+        logger.debug("Was invoked method getExtension for filename: {}", fileName);
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
     public List<Avatar> getAllAvatars(Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        logger.info("Was invoked method for get all avatars");
         return avatarRepository.findAll(pageRequest).getContent();
     }
 }
