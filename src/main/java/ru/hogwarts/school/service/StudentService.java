@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +23,11 @@ public class StudentService {
         this.facultyRepository = facultyRepository;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     public Student createStudent(Student student) {
+        logger.info("Was invoked method for create student");
+        logger.debug("Creating student with data: {}", student);
         if (student.getFaculty() != null && student.getFaculty().getId() != null) {
             Faculty faculty = facultyRepository.findById(student.getFaculty().getId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found with id " + student.getFaculty().getId()));
@@ -33,47 +39,74 @@ public class StudentService {
     }
 
     public Student findStudent(long id) {
+        logger.info("Was invoked method for find student");
+        logger.debug("Looking for student with id: {}", id);
         return studentRepository.findById(id).orElse(null);
     }
 
     public Student editStudent(Student student) {
+        logger.info("Was invoked method for edit student");
+        logger.debug("Editing student with data: {}", student);
         return createStudent(student);
     }
 
     public void deleteStudent(long id) {
+        logger.info("Was invoked method for delete student");
+        logger.debug("Deleting student with id: {}", id);
         studentRepository.deleteById(id);
     }
 
     public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
+        logger.info("Was invoked method getAllStudents");
+        Collection<Student> students = studentRepository.findAll();
+        logger.debug("Retrieved {} students", students.size());
+        return students;
     }
 
     public Collection<Student> findByAge(int age) {
-        return studentRepository.findByAge(age).stream()
-                .filter(student -> student.getAge() == age)
+        logger.info("Was invoked method for find students by age");
+        logger.debug("Finding students by age = {}", age);
+        Collection<Student> students = studentRepository.findByAge(age).stream()
+                .filter(s -> s.getAge() == age)
                 .collect(Collectors.toList());
+        logger.debug("Found {} students with age {}", students.size(), age);
+        return students;
     }
 
     public Collection<Student> findByAgeBetween(int ageMax, int ageMin) {
-        return studentRepository.findByAgeBetween(ageMax, ageMin);
+        logger.info("Was invoked method findByAgeBetween");
+        logger.debug("Finding students with age between {} and {}", ageMin, ageMax);
+        Collection<Student> students = studentRepository.findByAgeBetween(ageMin, ageMax);
+        logger.debug("Found {} students in age range", students.size());
+        return students;
     }
 
     public Faculty getFacultyByStudentId(Long studentId) {
+        logger.info("Was invoked method for get faculty by student id");
         return studentRepository.findById(studentId)
                 .map(Student::getFaculty)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
     }
 
     public Integer countOfAllStudents() {
-        return studentRepository.countOfAllStudents();
+        logger.info("Was invoked method countOfAllStudents");
+        Integer count = studentRepository.countOfAllStudents();
+        logger.debug("Total number of students: {}", count);
+        return count;
     }
 
     public Double averageAgeOfAllStudents() {
-        return studentRepository.averageAgeOfAllStudents();
+        logger.info("Was invoked method averageAgeOfAllStudents");
+        Double average = studentRepository.averageAgeOfAllStudents();
+        logger.debug("Average age of all students: {}", average);
+        return average;
     }
 
     public Collection<Student> getLastFiveStudents() {
-        return studentRepository.getLastFiveStudents();
+        logger.info("Was invoked method getLastFiveStudents");
+        Collection<Student> students = studentRepository.getLastFiveStudents();
+        logger.debug("Retrieved last five students, count: {}", students.size());
+        return students;
     }
 }
 
