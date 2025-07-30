@@ -36,11 +36,10 @@ public class AvatarService {
         this.avatarRepository = avatarRepository;
     }
 
-    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
     public void uploadAvatar(long studentId, MultipartFile file) throws IOException { //сохранение файла
-        logger.info("Was invoked method for upload student avatar");
-        logger.debug("Uploading avatar for studentId = {}, filename = {}", studentId, file.getOriginalFilename());
+        logger.info("Uploading avatar for studentId = {}, filename = {}", studentId, file.getOriginalFilename());
 
         Student student = studentService.findStudent(studentId);
 

@@ -20,7 +20,7 @@ public class FacultyService {
         this.studentRepository = studentRepository1;
     }
 
-    Logger logger = LoggerFactory.getLogger(FacultyService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FacultyService.class);
 
     public Faculty createFaculty(Faculty faculty) {
         logger.info("Was invoked method for create faculty");
