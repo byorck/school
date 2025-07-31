@@ -64,8 +64,14 @@ public class FacultyController {
     }
 
     @GetMapping("/get_student/{id}")
-    /** Read(get all students from faculties ID) http://localhost:8080/faculty/get/{id} **/
+    /** Read(get all students from faculties ID) http://localhost:8080/faculty/get_student/{id} **/
     public ResponseEntity<Collection<Student>> getStudentsByFacultyId(@PathVariable Long id) {
         return ResponseEntity.ok(facultyService.getStudentsByFacultyId(id));
+    }
+
+    @GetMapping("/get_most_longest_name")
+    /** Read(get all students from faculties ID) http://localhost:8080/faculty/get_most_longest_name **/
+    public ResponseEntity<Collection<String>> getMostLongestName() {
+        return ResponseEntity.ok(facultyService.getMostLongestName());
     }
 }
