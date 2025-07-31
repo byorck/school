@@ -10,6 +10,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -108,5 +109,29 @@ public class StudentService {
         logger.debug("Retrieved last five students, count: {}", students.size());
         return students;
     }
+
+    public void getAllStudentsWithParallelThreads() {
+        for (int i = 1; i <= 6; i = i + 2) {
+            final int index = i;
+            new Thread(() -> {
+                System.out.println((studentRepository.findAll().get(index)));
+                System.out.println((studentRepository.findAll().get(index + 1)));
+            }).start();
+        }
+    }
+
+    public synchronized void getAllStudentsWithParallelThreadsSynchronized() {
+        Object printLock = new Object();
+        for (int i = 1; i <= 6; i = i + 2) {
+            final int index = i;
+            new Thread(() -> {
+                synchronized (printLock) {
+                    System.out.println((studentRepository.findAll().get(index)));
+                    System.out.println((studentRepository.findAll().get(index + 1)));
+                }
+            }).start();
+        }
+    }
+
 }
 
