@@ -96,4 +96,17 @@ public class StudentController {
     public Collection<Student> getLastFiveStudents() {
         return studentService.getLastFiveStudents();
     }
+
+    @GetMapping("/print-parallel")
+    /** Read(get all) http://localhost:8080/student/print-parallel **/
+    public void getAllStudentsWithParallelThreads() {
+        studentService.getAllStudentsWithParallelThreads();
+    }
+
+    @GetMapping("/print-synchronized")
+    /** Read(get all) http://localhost:8080/student/print-synchronized **/
+    public void getAllStudentsWithParallelThreadsSynchronized() {
+        studentService.getAllStudentsWithParallelThreadsSynchronized();
+    }
+
 }
