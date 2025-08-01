@@ -81,4 +81,12 @@ public class FacultyService {
         logger.debug("Found {} students in faculty id = {}", students.size(), facultyId);
         return students;
     }
+
+    public Collection<String> getMostLongestName() {
+        logger.info("Was invoked method getMostLongestName");
+        Collection<String> names = studentRepository.findAll().stream().map(Student::getName).toList();
+        int maxLength = names.stream().mapToInt(String::length).max().orElse(0);
+        logger.debug("Most longest names is {} symbols", maxLength);
+        return names.stream().filter(name -> name.length() == maxLength).toList();
+    }
 }
