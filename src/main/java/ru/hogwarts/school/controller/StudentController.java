@@ -96,7 +96,6 @@ public class StudentController {
     public Collection<Student> getLastFiveStudents() {
         return studentService.getLastFiveStudents();
     }
-
     @GetMapping("/print-parallel")
     /** Read(get all) http://localhost:8080/student/print-parallel **/
     public void getAllStudentsWithParallelThreads() {
@@ -109,4 +108,16 @@ public class StudentController {
         studentService.getAllStudentsWithParallelThreadsSynchronized();
     }
 
+=======
+    @GetMapping("/get_students_whose_name_starts_with_A")
+    /** Read(get all) http://localhost:8080/student/get_students_whose_name_starts_with_A **/
+    public ResponseEntity<Collection<Student>> getStudentsWhoseNameStartsWithA() {
+        return ResponseEntity.ok(studentService.getStudentsWhoseNameStartsWithA());
+    }
+
+    @GetMapping("/get_students_average_age")
+    /** Read(get all) http://localhost:8080/student/get_students_average_age **/
+    public ResponseEntity<Double> getStudentsAverageAge() {
+        return ResponseEntity.ok(studentService.getStudentsAverageAge());
+    }
 }

@@ -109,7 +109,7 @@ public class StudentService {
         logger.debug("Retrieved last five students, count: {}", students.size());
         return students;
     }
-
+  
     public void getAllStudentsWithParallelThreads() {
         for (int i = 1; i <= 6; i = i + 2) {
             final int index = i;
@@ -119,7 +119,7 @@ public class StudentService {
             }).start();
         }
     }
-
+  
     public synchronized void getAllStudentsWithParallelThreadsSynchronized() {
         Object printLock = new Object();
         for (int i = 1; i <= 6; i = i + 2) {
@@ -133,5 +133,18 @@ public class StudentService {
         }
     }
 
+    public Collection<Student> getStudentsWhoseNameStartsWithA() {
+        logger.info("Was invoked method getStudentsWhoseNameStartsWithA");
+        Collection<Student> students = studentRepository.findAll().stream().filter(s -> s.getName().startsWith("А")).toList();
+        logger.debug("Students, whose name starts with the letter A count: {}", students.size());
+        return students;
+    }
+
+    public Double getStudentsAverageAge() {
+        logger.info("Was invoked method getStudentsAverageAge");
+        Double average = studentRepository.findAll().stream().mapToDouble(Student::getAge).average().orElse(0.0);
+        logger.debug("All students average age: {}", average);
+        return average;
+    }
 }
 
