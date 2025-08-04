@@ -10,7 +10,6 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -111,6 +110,7 @@ public class StudentService {
     }
   
     public void getAllStudentsWithParallelThreads() {
+        logger.info("Was invoked method getAllStudentsWithParallelThreads");
         for (int i = 1; i <= 6; i = i + 2) {
             final int index = i;
             new Thread(() -> {
@@ -121,6 +121,7 @@ public class StudentService {
     }
   
     public synchronized void getAllStudentsWithParallelThreadsSynchronized() {
+        logger.info("Was invoked method getAllStudentsWithParallelThreadsSynchronized");
         Object printLock = new Object();
         for (int i = 1; i <= 6; i = i + 2) {
             final int index = i;
