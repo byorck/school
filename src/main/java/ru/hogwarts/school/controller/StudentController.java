@@ -96,7 +96,19 @@ public class StudentController {
     public Collection<Student> getLastFiveStudents() {
         return studentService.getLastFiveStudents();
     }
+    @GetMapping("/print-parallel")
+    /** Read(get all) http://localhost:8080/student/print-parallel **/
+    public void getAllStudentsWithParallelThreads() {
+        studentService.getAllStudentsWithParallelThreads();
+    }
 
+    @GetMapping("/print-synchronized")
+    /** Read(get all) http://localhost:8080/student/print-synchronized **/
+    public void getAllStudentsWithParallelThreadsSynchronized() {
+        studentService.getAllStudentsWithParallelThreadsSynchronized();
+    }
+
+=======
     @GetMapping("/get_students_whose_name_starts_with_A")
     /** Read(get all) http://localhost:8080/student/get_students_whose_name_starts_with_A **/
     public ResponseEntity<Collection<Student>> getStudentsWhoseNameStartsWithA() {
