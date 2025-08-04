@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ public class AvatarController {
     }
 
     @PostMapping(value = "/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Загрузить аватар, привязав его к ID студента")
     public ResponseEntity uploadAvatar(@PathVariable Long studentId, @RequestParam MultipartFile avatar) throws IOException {
         if (avatar.getSize() >= 640 * 640) {
             return ResponseEntity.badRequest().body("File is too big");
@@ -37,6 +39,7 @@ public class AvatarController {
     }
 
     @GetMapping(value = "/{id}/avatar-from-db")
+    @Operation(summary = "Получить аватар студента из базы данных по ID студента")
     public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) throws IOException {
         Avatar avatar = avatarService.findAvatar(id);
 
@@ -48,6 +51,7 @@ public class AvatarController {
     }
 
     @GetMapping(value = "/{id}/avatar-from-file")
+    @Operation(summary = "Получить оригинал аватара студента по ID студента")
     public void downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.findAvatar(id);
 
@@ -63,6 +67,7 @@ public class AvatarController {
     }
 
     @GetMapping
+    @Operation(summary = "Получить все аватары студентов, в постраничном режиме")
     public ResponseEntity<List<Avatar>> getAllAvatars(@RequestParam(defaultValue = "1") Integer pageNumber, @RequestParam(defaultValue = "5") Integer pageSize) {
         List<Avatar> avatars = avatarService.getAllAvatars(pageNumber, pageSize);
         return ResponseEntity.ok(avatars);

@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
@@ -18,13 +19,13 @@ public class StudentController {
     }
 
     @PostMapping
-    /** Create http://localhost:8080/student **/
+    @Operation(summary = "Создать студента")
     public Student createStudent(@RequestBody Student student) {
         return studentService.createStudent(student);
     }
 
     @GetMapping("{id}")
-    /** Read http://localhost:8080/student/{id} **/
+    @Operation(summary = "Получить информацию о студенте по ID")
     public ResponseEntity<Student> getStudentInfo(@PathVariable Long id) {
         Student student = studentService.findStudent(id);
         if (student == null) {
@@ -34,7 +35,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    /** Update http://localhost:8080/student **/
+    @Operation(summary = "Изменить информацию о студенте по его ID")
     public ResponseEntity<Student> editStudentInfo(@PathVariable Long id, @RequestBody Student student) {
         student.setId(id);
         Student foundStudent = studentService.editStudent(student);
@@ -45,32 +46,32 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    /** Delete http://localhost:8080/student/{id} **/
+    @Operation(summary = "Удалить студента по его ID")
     public ResponseEntity<Student> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    /** Read(get all) http://localhost:8080/student/ **/
+    @Operation(summary = "Получить список всех студентов")
     public ResponseEntity<Collection<Student>> getAllStudent() {
         return ResponseEntity.ok(studentService.getAllStudents());
     }
 
     @GetMapping("/find/{age}")
-    /** Read(find by age) http://localhost:8080/student/find/{age} **/
+    @Operation(summary = "Найти всех студентов, соответствующих возрасту")
     public ResponseEntity<Collection<Student>> findByAge(@PathVariable int age) {
         return ResponseEntity.ok(studentService.findByAge(age));
     }
 
     @GetMapping("/find/age_between")
-    /** Read(find by age between range) http://localhost:8080/student/find/age_between?ageMin=12&ageMax=15 **/
+    @Operation(summary = "Найти всех студентов, соответствующих возрасту в диапазоне")
     public ResponseEntity<Collection<Student>> findByAgeBetween(@RequestParam int ageMin, @RequestParam int ageMax) {
         return ResponseEntity.ok(studentService.findByAgeBetween(ageMin, ageMax));
     }
 
     @GetMapping("/get_faculty/{id}")
-    /** Read(get faculty by student ID) http://localhost:8080/student/get_faculty/{id} **/
+    @Operation(summary = "Получить информацию о факультете студента по его ID")
     public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable Long id) {
         Faculty faculty = studentService.getFacultyByStudentId(id);
         if (faculty == null) {
@@ -80,43 +81,42 @@ public class StudentController {
     }
 
     @GetMapping("/count_of_all_students")
-    /** Read(get all) http://localhost:8080/student/count_of_all_students **/
+    @Operation(summary = "Получить число всех студентов")
     public Integer countOfAllStudent() {
         return studentService.countOfAllStudents();
     }
 
     @GetMapping("/average_age_of_all_students")
-    /** Read(get all) http://localhost:8080/student/average_age_of_all_students **/
+    @Operation(summary = "Получить средний возраст всех студентов")
     public Double averageAgeOfAllStudents() {
         return studentService.averageAgeOfAllStudents();
     }
 
     @GetMapping("/get_last_five_students")
-    /** Read(get all) http://localhost:8080/student/get_last_five_students **/
+    @Operation(summary = "Получить пять последних студентов")
     public Collection<Student> getLastFiveStudents() {
         return studentService.getLastFiveStudents();
     }
     @GetMapping("/print-parallel")
-    /** Read(get all) http://localhost:8080/student/print-parallel **/
+    @Operation(summary = "Получить всех студентов(в параллельном режиме)")
     public void getAllStudentsWithParallelThreads() {
         studentService.getAllStudentsWithParallelThreads();
     }
 
     @GetMapping("/print-synchronized")
-    /** Read(get all) http://localhost:8080/student/print-synchronized **/
+    @Operation(summary = "Получить всех студентов(в параллельном режиме с синхронизацией)")
     public void getAllStudentsWithParallelThreadsSynchronized() {
         studentService.getAllStudentsWithParallelThreadsSynchronized();
     }
 
-=======
     @GetMapping("/get_students_whose_name_starts_with_A")
-    /** Read(get all) http://localhost:8080/student/get_students_whose_name_starts_with_A **/
+    @Operation(summary = "Получить всех студентов, чье имя начинается с буквы \"А\"")
     public ResponseEntity<Collection<Student>> getStudentsWhoseNameStartsWithA() {
         return ResponseEntity.ok(studentService.getStudentsWhoseNameStartsWithA());
     }
 
     @GetMapping("/get_students_average_age")
-    /** Read(get all) http://localhost:8080/student/get_students_average_age **/
+    @Operation(summary = "Получить средний возраст всех студентов")
     public ResponseEntity<Double> getStudentsAverageAge() {
         return ResponseEntity.ok(studentService.getStudentsAverageAge());
     }
